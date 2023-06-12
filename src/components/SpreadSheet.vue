@@ -23,6 +23,8 @@
 </template>
 
 <script>
+  import { all, create } from 'mathjs'
+
   export default {
     data() {
       return{
@@ -57,7 +59,10 @@
 
         if(value && value.length > 0){
           if(value.startsWith('=')){
-              this.inputValues[id] = eval(value.substring(1));
+              const math = create(all);
+
+              this.inputValues[id] = math.evaluate(value.substring(1));
+              
 
               //this.inputValues[id] = this.inputValues[value.substring(1)];
           }

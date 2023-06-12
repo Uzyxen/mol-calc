@@ -1,5 +1,7 @@
 <template>
-  <Spreadsheet/>
+  <div id="container">
+    <Spreadsheet/>
+  </div>
 </template>
 
 <script>
@@ -14,5 +16,7 @@ export default {
 </script>
 
 <style>
-
+  #container{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
 </style>
