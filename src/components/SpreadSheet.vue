@@ -15,7 +15,7 @@
          :id="column + row" 
          v-model="inputValues[column + row]" 
          @focus="inputFocused(column, row)"
-         @blur="inputBlur"
+         @blur="{ inputBlur; calculate(column + row) }"
          :class="{ 'focused': column + row === focusedCell}">
       </div>
     </div>
@@ -52,14 +52,16 @@
       },
 
 
-      checkIfEquation(){
-        //const value = this.inputValues[id];
+      calculate(id){
+        const value = this.inputValues[id];
 
-       // if(value && value.length > 0){
-          //if(value.startsWith('=')){
+        if(value && value.length > 0){
+          if(value.startsWith('=')){
+              this.inputValues[id] = eval(value.substring(1));
+
               //this.inputValues[id] = this.inputValues[value.substring(1)];
-          //}
-        //}
+          }
+        }
       }
     }
   }
@@ -101,11 +103,9 @@
   }
 
   .column.focused{
-    border: 2px solid blue !important;
-    border-top: none !important;
-    height: 19px;
-    width: 67px;
-    z-index: 999;
+    background-color: blue;
+    border-color: blue;
+    color: #fff;
   }
 
   .row{
@@ -118,11 +118,9 @@
   }
 
   .row.focused{
-    border: 2px solid red !important;
-    border-left: none !important;
-    width: 49px;
-    height: 17px;
-    z-index: 999;
+    background-color: red;
+    border-color: red;
+    color: #fff;
   }
 
   #sheet{
@@ -152,6 +150,7 @@
   .sheet-column.focused{
     z-index: 99;
     border: 2px solid #000;
-    width: 68px;
+    height: 17px;
+    width: 67px;
   }
 </style>
