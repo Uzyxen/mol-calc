@@ -2,7 +2,7 @@
   <div>
     <div id="functions">
       <h2>=</h2>
-      <input type="text" id="formula" v-model="focusedCellValue" @input="inputValues[focusedCell] = focusedCellValue">
+      <input type="text" id="formula" v-model="focusedCellValue" @input="inputValues[focusedCell] = focusedCellValue" @keyup.enter="calculate(focusedCell)">
     </div>
 
 
