@@ -1,24 +1,34 @@
 <template>
   <div>
-    <div id="columns">
-      <div id="empty-space"></div>
-      <div class="column" v-for="column in columns" :id="column" :key="column" :class="{ 'focused': column === focusedColumn}">{{ column }}</div>
+    <div id="functions">
+      <h2>=</h2>
+      <input type="text" id="formula" v-model="focusedCellValue" @input="inputValues[focusedCell] = focusedCellValue">
     </div>
 
-    <div id="rows">
-      <div class="row" v-for="row in 100" :id="row" :key="row" :class="{ 'focused': row === focusedRow}">{{ row }}</div>
-    </div>
 
-    <div id="sheet">
-      <div class="sheet-row" v-for="row in 100" :key="row">
-        <input type="text" class="sheet-column" v-for="column in columns" :key="column"
-         :id="column + row" 
-         v-model="inputValues[column + row]" 
-         @focus="inputFocused(column, row)"
-         @blur="{ inputBlur; calculate(column + row) }"
-         :class="{ 'focused': column + row === focusedCell}">
+    <div id="main">
+      <div id="columns">
+        <div id="empty-space"></div>
+        <div class="column" v-for="column in columns" :id="column" :key="column" :class="{ 'focused': column === focusedColumn}">{{ column }}</div>
+      </div>
+
+      <div id="rows">
+        <div class="row" v-for="row in 100" :id="row" :key="row" :class="{ 'focused': row === focusedRow}">{{ row }}</div>
+      </div>
+
+      <div id="sheet">
+        <div class="sheet-row" v-for="row in 100" :key="row">
+          <input type="text" class="sheet-column" v-for="column in columns" :key="column"
+          :id="column + row" 
+          v-model="inputValues[column + row]" 
+          @focus="inputFocused(column, row)"
+          @blur="{ inputBlur; calculate(column + row); }"
+          @input="focusedCellValue = inputValues[column + row]"
+          :class="{ 'focused': column + row === focusedCell}">
+        </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -35,6 +45,7 @@
         focusedColumn: '',
         focusedRow: '',
         focusedCell: '',
+        focusedCellValue: 0,
 
         inputValues: {}
       }
@@ -45,6 +56,7 @@
         this.focusedColumn = column;
         this.focusedRow = row;
         this.focusedCell = column + row;
+        this.focusedCellValue = this.inputValues[this.focusedCell];
       },
 
       inputBlur() {
@@ -61,8 +73,11 @@
           if(value.startsWith('=')){
               const math = create(all);
 
-              this.inputValues[id] = math.evaluate(value.substring(1));
-              
+              try{
+                this.inputValues[id] = math.evaluate(value.substring(1));
+              } catch (error){
+                this.inputValues[id] = "#ERROR";
+              }
 
               //this.inputValues[id] = this.inputValues[value.substring(1)];
           }
@@ -73,6 +88,27 @@
 </script>
 
 <style>
+  #functions{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  #functions h2{
+    margin: 0;
+  }
+
+  #formula{
+    outline: none;
+    border: 1px solid #aaa;
+    height: 20px;
+    position: relative;
+  }
+
+  #main{
+    position: relative;
+  }
+
   #empty-space{
     width: 50px;
     background-color: #fff;
@@ -84,6 +120,7 @@
     top: 0;
     width: 300vh;
     z-index: 99;
+    background-color: #fff;
   }
 
   #rows{
