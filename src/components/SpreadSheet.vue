@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div id="functions">
-      <h2>=</h2>
-      <input type="text" id="formula" v-model="focusedCellValue" @input="inputValues[focusedCell] = focusedCellValue" @keyup.enter="calculate(focusedCell)">
-    </div>
-
+    <FormulaInput :formula="formula"/>
 
     <div id="main">
       <div id="columns">
@@ -18,13 +14,7 @@
 
       <div id="sheet">
         <div class="sheet-row" v-for="row in 100" :key="row">
-          <input type="text" class="sheet-column" v-for="column in columns" :key="column"
-          :id="column + row" 
-          v-model="inputValues[column + row]" 
-          @focus="inputFocused(column, row)"
-          @blur="{ inputBlur; calculate(column + row); }"
-          @input="focusedCellValue = inputValues[column + row]"
-          :class="{ 'focused': column + row === focusedCell}">
+          <SingleCell v-for="column in columns" :key="column" @formulaSent="handleEvent"/>
         </div>
       </div>
     </div>
@@ -33,7 +23,8 @@
 </template>
 
 <script>
-  import { all, create } from 'mathjs'
+  import FormulaInput from './FormulaInput.vue';
+  import SingleCell from './SingleCell.vue';
 
   export default {
     data() {
@@ -45,13 +36,16 @@
         focusedColumn: '',
         focusedRow: '',
         focusedCell: '',
-        focusedCellValue: 0,
+        formula: ''
 
-        inputValues: {}
       }
     },
 
     methods:{
+      handleEvent(value) {
+        this.formula = value;
+      },
+
       inputFocused(column, row) {
         this.focusedColumn = column;
         this.focusedRow = row;
@@ -65,24 +59,23 @@
         this.focusedCell = '';
       },
 
+      evaluateCellReferences(expression) {
+        const cellReferenceRegex = /[A-Z]+\d+/g;
+        const cellReferences = expression.match(cellReferenceRegex);
 
-      calculate(id){
-        const value = this.inputValues[id];
-
-        if(value && value.length > 0){
-          if(value.startsWith('=')){
-              const math = create(all);
-
-              try{
-                this.inputValues[id] = math.evaluate(value.substring(1));
-              } catch (error){
-                this.inputValues[id] = "#ERROR";
-              }
-
-              //this.inputValues[id] = this.inputValues[value.substring(1)];
+        if (cellReferences) {
+          for (const cellRef of cellReferences) {
+            const cellValue = this.inputValues[cellRef];
+            expression = expression.replace(cellRef, cellValue);
           }
         }
+
+        return expression;
       }
+    },
+    components: {
+      SingleCell,
+      FormulaInput
     }
   }
 </script>
@@ -112,6 +105,7 @@
   #empty-space{
     width: 50px;
     background-color: #fff;
+    border-top: 1px solid #aaa;
   }
 
   #columns{
@@ -141,7 +135,6 @@
     width: 70px;
     height: 20px;
     border: 1px solid #aaa;
-    border-top: none;
   }
 
   .column.focused{
@@ -175,18 +168,8 @@
 
   .sheet-row{
     display: flex;
-    width: 100%;
+    width: 300vh;
     height: 21px;
-  }
-
-  .sheet-column{
-    border: 1px solid #aaa;
-    border-left: none;
-    border-top: none;
-    outline: none;
-    padding: 0;
-    width: 70px;
-    height: 20px;
   }
 
   .sheet-column.focused{
