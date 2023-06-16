@@ -1,5 +1,12 @@
 <template>
-    <input type="text" class="cell" v-model="formula" @blur="calculate" @input="sendFormula" @focus="sendFormula">
+    <input v-if="editMode" type="text" class="cell" 
+    v-model="formula" 
+    @blur="{ calculate(); editMode = false }" 
+    @keyup.enter="{ calculate(); editMode = false }" 
+    @input="sendFormula" 
+    @focus="sendFormula"
+    @vue:mounted="({ el }) => el.focus()">
+    <span v-else class="cell" @click="editMode = true">{{ value }}</span>
 </template>
 
 <script>
@@ -9,7 +16,8 @@
         data() {
             return {
                 formula: '',
-                value: ''
+                value: '',
+                editMode: false
             }
         },
         methods: {
@@ -43,6 +51,7 @@
         padding: 0;
         width: 70px;
         height: 20px;
+        overflow: hidden;
     }
 
 </style>
