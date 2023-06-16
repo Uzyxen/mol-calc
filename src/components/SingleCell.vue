@@ -1,5 +1,5 @@
 <template>
-    <input v-if="editMode" type="text" class="cell" 
+    <input v-if="editMode" type="text" class="cell selected-cell"
     v-model="formula" 
     @blur="{ calculate(); editMode = false }" 
     @keyup.enter="{ calculate(); editMode = false }" 
@@ -32,6 +32,8 @@
                         catch {
                             this.value = '#ERROR';
                         }
+                    } else {
+                        this.value = this.formula;
                     }
                 }
             },
@@ -52,6 +54,14 @@
         width: 70px;
         height: 20px;
         overflow: hidden;
+        cursor: cell;
+    }
+
+    .selected-cell{
+        border: 2px solid #000;
+        width: 67px;
+        height: 16px;
+        cursor: text;
     }
 
 </style>

@@ -1,6 +1,10 @@
 <template>
   <div>
-    <FormulaInput :formula="formula"/>
+    <div id="topbar">
+
+    </div>
+
+    <FormulaInput :formula="formula" :focusedCell="focusedCell"/>
 
     <div id="main">
       <div id="columns">
@@ -9,12 +13,12 @@
       </div>
 
       <div id="rows">
-        <div class="row" v-for="row in 100" :id="row" :key="row" :class="{ 'focused': row === focusedRow}">{{ row }}</div>
+        <div class="row" v-for="row in 30" :id="row" :key="row" :class="{ 'focused': row === focusedRow}">{{ row }}</div>
       </div>
 
       <div id="sheet">
-        <div class="sheet-row" v-for="row in 100" :key="row">
-          <SingleCell v-for="column in columns" :key="column" @formulaSent="handleEvent"/>
+        <div class="sheet-row" v-for="row in 30" :key="row">
+          <SingleCell :id="column + row" @click="focusedCell = column + row" v-for="column in columns" :key="column" @formulaSent="handleEvent"/>
         </div>
       </div>
     </div>
@@ -31,13 +35,12 @@
       return{
         columns: [
           'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-          'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+          'N', 'O'
         ],
         focusedColumn: '',
         focusedRow: '',
         focusedCell: '',
         formula: ''
-
       }
     },
 
@@ -81,21 +84,9 @@
 </script>
 
 <style>
-  #functions{
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  #functions h2{
-    margin: 0;
-  }
-
-  #formula{
-    outline: none;
-    border: 1px solid #aaa;
-    height: 20px;
-    position: relative;
+  #topbar{
+    height: 70px;
+    border-bottom: 1px solid #ddd;
   }
 
   #main{
@@ -104,6 +95,7 @@
 
   #empty-space{
     width: 50px;
+    height: 20px;
     background-color: #fff;
     border-top: 1px solid #aaa;
   }
@@ -133,7 +125,7 @@
     display: flex;
     justify-content: center;
     width: 70px;
-    height: 20px;
+    height: 21px;
     border: 1px solid #aaa;
   }
 
@@ -160,7 +152,7 @@
 
   #sheet{
     position: absolute;
-    top: 22px;
+    top: 23px;
     left: 51px;
     width: calc(100% - 50px);
     height: 250vh;
